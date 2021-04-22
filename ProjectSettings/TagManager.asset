@@ -7,6 +7,11 @@ TagManager:
   - Food
   - FxTemporaire
   - Electric
+  - Fire
+  - Water
+  - Enemy
+  - Tail
+  - Wall
   layers:
   - Default
   - TransparentFX
