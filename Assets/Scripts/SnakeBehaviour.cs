@@ -21,13 +21,13 @@ public class SnakeBehaviour : MonoBehaviour
     [SerializeField] private bool ate = false;
     private Animator animator;
     public GameObject tailPrefab;
+    public AudioSource collectSound;
     public Canvas PauseUI;
     public Slider PowerLeft;
     // Power up stuff
     public ParticleSystem[] Powerups;
     [SerializeField]
     private Power power;
-    
     public int Score;
     // Start is called before the first frame update
     void Start()
@@ -44,7 +44,7 @@ public class SnakeBehaviour : MonoBehaviour
         PowerLeft.value = 0;
         InvokeRepeating("Move", 0.1f, 0.1f);
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if(GameManager.Instance.Mode == true && Score == 50)
         {
@@ -52,6 +52,8 @@ public class SnakeBehaviour : MonoBehaviour
         }
         if(PowerLeft.value > 0)
             PowerLeft.value -= Time.deltaTime;
+
+        //Move();
     }
     public void OnMove(InputValue value)
     {
@@ -104,8 +106,9 @@ public class SnakeBehaviour : MonoBehaviour
             GameObject newTail = Instantiate(tailPrefab, pos, Quaternion.identity);
             tail.Insert(0, newTail.transform);
             Score++;
-            ate = false;
             animator.SetBool("Eating", false);
+            collectSound.Play();
+            ate = false;
         }
         // if we have tail
         if (tail.Count > 0)
@@ -132,16 +135,19 @@ public class SnakeBehaviour : MonoBehaviour
         // Colliding with power ups
         if (other.gameObject.CompareTag("Electric") && power == Power.None)
         {
+            collectSound.Play();
             StartCoroutine(ElectricPower());
             Destroy(other.gameObject);
         }
         if(other.gameObject.CompareTag("Fire") && power == Power.None)
         {
+            collectSound.Play();
             StartCoroutine(FirePower());
             Destroy(other.gameObject);
         }
         if (other.gameObject.CompareTag("Water") && power == Power.None)
         {
+            collectSound.Play();
             StartCoroutine(WaterPower());
             Destroy(other.gameObject);
         }
@@ -151,6 +157,8 @@ public class SnakeBehaviour : MonoBehaviour
         {
             if(other.gameObject.GetComponent<SpikeBehaviour>().power == power)
             {
+                animator.SetBool("Eating", true);
+                ate = true;
                 Destroy(other.gameObject);
             }
             else

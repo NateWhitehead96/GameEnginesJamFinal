@@ -9,10 +9,13 @@ public class CameraFollow : MonoBehaviour
     public float ZOffset;
     public float XOffset;
     public float YOffset;
-   
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
+    {
+        InvokeRepeating("Follow", 0.1f, 0.1f);
+    }
+    
+    public void Follow()
     {
         transform.position = new Vector3(player.position.x + XOffset, player.position.y + YOffset, player.position.z + ZOffset);
     }
